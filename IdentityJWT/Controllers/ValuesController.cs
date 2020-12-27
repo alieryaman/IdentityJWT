@@ -2,19 +2,33 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using IdentityJWT.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IdentityJWT.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ValuesController : ControllerBase
     {
+
+        private AppIdentitiyDbContext context;
+
+        public ValuesController(AppIdentitiyDbContext context)
+        {
+            this.context = context;
+        }
+
         // GET api/values
         [HttpGet]
         public ActionResult<IEnumerable<string>> Get()
         {
-            return new string[] { "value1", "value2" };
+
+
+            //return new string[] { "value1", "value2" };
+            return context.Users.Select(x => x.UserName).ToArray();
         }
 
         // GET api/values/5
