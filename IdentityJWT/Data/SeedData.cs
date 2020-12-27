@@ -10,10 +10,13 @@ namespace IdentityJWT.Data
     public  class SeedData
     {
 
-        public static void Initialize(IServiceProvider serviceProvider)
+        public static async Task Initialize(IServiceProvider serviceProvider)
         {
             var context = serviceProvider.GetRequiredService<AppIdentitiyDbContext>();
             var UserManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+            var roleManager= serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            string rolAdmin= "admin";
+            string rolEditor = "editor";
             context.Database.EnsureCreated();
 
             if(!context.Users.Any())
@@ -25,9 +28,31 @@ namespace IdentityJWT.Data
                     SecurityStamp=Guid.NewGuid().ToString()
                 };
 
-                UserManager.CreateAsync(user,"Kdk2011.");
+              await  UserManager.CreateAsync(user,"Kdk2011.");
+
+          
+            if (!context.Roles.Any())
+            {
+                //roleManager.FindByNameAsync(rolAdmin);
+               // roleManager.FindByNameAsync(rolEditor);
+
+                if (await roleManager.FindByNameAsync(rolAdmin)==null)
+                {
+                        await roleManager.CreateAsync(new IdentityRole(rolAdmin));
+                }
+
+                if (await roleManager.FindByNameAsync(rolEditor) == null)
+                {
+                        await roleManager.CreateAsync(new IdentityRole(rolEditor));
+                }
+            }
+
+                await UserManager.AddToRoleAsync(user, rolAdmin);
 
             }
+
+
+
 
         }
 

@@ -50,6 +50,11 @@ namespace IdentityJWT.Controllers
             var user = await userManager.FindByNameAsync(model.UserName);
             if (user != null && await userManager.CheckPasswordAsync(user,model.Password))
             {
+
+                var userRoles = await userManager.GetRolesAsync(user);
+
+                
+
                 var claims = new List<Claim>
                 {
                     new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
@@ -57,12 +62,18 @@ namespace IdentityJWT.Controllers
 
                 };
 
-               
+                //kulnıcını rolleri claime kelneyior
+                foreach (var role in userRoles)
+                {
+                    claims.Add( new Claim(ClaimTypes.Role,role));
+                }
+
                 var signKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("AspNetCoreDersimiii"));
 
                 var token = new JwtSecurityToken(
                     issuer: "https://localhost:44373/",
                     audience: "https://localhost:44373/",
+                    claims:claims,
                   //  expires:DateTime.Now.AddHours(1),
                     expires: DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc).AddHours(1),
                     signingCredentials:new SigningCredentials(signKey, SecurityAlgorithms.HmacSha256)

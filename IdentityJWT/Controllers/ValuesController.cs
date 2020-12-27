@@ -23,6 +23,7 @@ namespace IdentityJWT.Controllers
 
         // GET api/values
         [HttpGet]
+        [Authorize(Roles ="adminn")]
         public ActionResult<IEnumerable<string>> Get()
         {
 

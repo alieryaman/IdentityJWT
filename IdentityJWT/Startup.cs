@@ -71,9 +71,15 @@ namespace IdentityJWT
             {
                 app.UseHsts();
             }
-            SeedData.Initialize(app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope().ServiceProvider);
+
+
+            SeedData.Initialize(app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope().ServiceProvider).Wait();
             app.UseAuthentication();
+
+
             app.UseHttpsRedirection();
+
+
             app.UseMvc();
         }
     }
